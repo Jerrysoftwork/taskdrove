@@ -10,6 +10,7 @@ export default function App() {
   });
   const [newTask, setNewTask] = useState("");
   const [filter, setFilter] = useState("All");
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -33,32 +34,42 @@ export default function App() {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
-  // Filter tasks before rendering
   const filteredTasks = tasks.filter((task) => {
     if (filter === "Active") return !task.completed;
     if (filter === "Completed") return task.completed;
-    return true; // All
+    return true;
   });
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
-        <h1 className="text-2xl font-bold mb-4 text-center text-indigo-600">
-          Taskdrove ✅
-        </h1>
+    <div className={darkMode ? "dark min-h-screen" : "min-h-screen"}>
+      <div className="bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-6 min-h-screen transition-colors">
+        <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transition-colors">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+              Taskdrove ✅
+            </h1>
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="px-3 py-1 text-sm rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+            >
+              {darkMode ? "☀️ Light" : "🌙 Dark"}
+            </button>
+          </div>
 
-        {/* Add Task */}
-        <TodoForm newTask={newTask} setNewTask={setNewTask} addTask={addTask} />
+          {/* Add Task */}
+          <TodoForm newTask={newTask} setNewTask={setNewTask} addTask={addTask} />
 
-        {/* Filter Buttons */}
-        <FilterButtons filter={filter} setFilter={setFilter} />
+          {/* Filters */}
+          <FilterButtons filter={filter} setFilter={setFilter} />
 
-        {/* Task List */}
-        <TodoList
-          tasks={filteredTasks}
-          toggleTask={toggleTask}
-          deleteTask={deleteTask}
-        />
+          {/* Task List */}
+          <TodoList
+            tasks={filteredTasks}
+            toggleTask={toggleTask}
+            deleteTask={deleteTask}
+          />
+        </div>
       </div>
     </div>
   );
