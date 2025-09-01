@@ -50,6 +50,14 @@ export default function App() {
     return true;
   });
 
+  const editTask = (id, newText) => {
+  setTasks(
+    tasks.map((task) =>
+      task.id === id ? { ...task, text: newText } : task
+    )
+  );
+};
+
   return (
     <div className={darkMode ? "dark min-h-screen" : "min-h-screen"}>
       <div className="bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-6 min-h-screen transition-colors">
