@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import TodoForm from "./components/TodoForm";
 import TodoList from "./components/TodoList";
+import FilterButtons from "./components/FilterButtons";
 
 export default function App() {
   const [tasks, setTasks] = useState(() => {
@@ -8,6 +9,7 @@ export default function App() {
     return saved ? JSON.parse(saved) : [];
   });
   const [newTask, setNewTask] = useState("");
+  const [filter, setFilter] = useState("All");
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -31,6 +33,13 @@ export default function App() {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
+  // Filter tasks before rendering
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "Active") return !task.completed;
+    if (filter === "Completed") return task.completed;
+    return true; // All
+  });
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
@@ -38,8 +47,18 @@ export default function App() {
           Taskdrove ✅
         </h1>
 
+        {/* Add Task */}
         <TodoForm newTask={newTask} setNewTask={setNewTask} addTask={addTask} />
-        <TodoList tasks={tasks} toggleTask={toggleTask} deleteTask={deleteTask} />
+
+        {/* Filter Buttons */}
+        <FilterButtons filter={filter} setFilter={setFilter} />
+
+        {/* Task List */}
+        <TodoList
+          tasks={filteredTasks}
+          toggleTask={toggleTask}
+          deleteTask={deleteTask}
+        />
       </div>
     </div>
   );
