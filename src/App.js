@@ -10,21 +10,10 @@ export default function App() {
   });
   const [newTask, setNewTask] = useState("");
   const [filter, setFilter] = useState("All");
-  const [darkMode, setDarkMode] = useState(() => {
-    // ✅ Load dark mode preference
-    const saved = localStorage.getItem("darkMode");
-    return saved ? JSON.parse(saved) : false;
-  });
 
-  // ✅ Save tasks
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
-
-  // ✅ Save dark mode preference
-  useEffect(() => {
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
 
   const addTask = () => {
     if (!newTask.trim()) return;
@@ -44,50 +33,40 @@ export default function App() {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
+  const editTask = (id, newText) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, text: newText } : task
+      )
+    );
+  };
+
   const filteredTasks = tasks.filter((task) => {
     if (filter === "Active") return !task.completed;
     if (filter === "Completed") return task.completed;
     return true;
   });
 
-  const editTask = (id, newText) => {
-  setTasks(
-    tasks.map((task) =>
-      task.id === id ? { ...task, text: newText } : task
-    )
-  );
-};
-
   return (
-    <div className={darkMode ? "dark min-h-screen" : "min-h-screen"}>
-      <div className="bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-6 min-h-screen transition-colors">
-        <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transition-colors">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-              Taskdrove ✅
-            </h1>
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="px-3 py-1 text-sm rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-            >
-              {darkMode ? "☀️ Light" : "🌙 Dark"}
-            </button>
-          </div>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-6">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+        <h1 className="text-2xl font-bold mb-4 text-center text-indigo-600 dark:text-indigo-400">
+          Taskdrove ✅
+        </h1>
 
-          {/* Add Task */}
-          <TodoForm newTask={newTask} setNewTask={setNewTask} addTask={addTask} />
+        {/* Task input */}
+        <TodoForm newTask={newTask} setNewTask={setNewTask} addTask={addTask} />
 
-          {/* Filters */}
-          <FilterButtons filter={filter} setFilter={setFilter} />
+        {/* Filter buttons */}
+        <FilterButtons filter={filter} setFilter={setFilter} />
 
-          {/* Task List */}
-          <TodoList
-            tasks={filteredTasks}
-            toggleTask={toggleTask}
-            deleteTask={deleteTask}
-          />
-        </div>
+        {/* Task list */}
+        <TodoList
+          tasks={filteredTasks}
+          toggleTask={toggleTask}
+          deleteTask={deleteTask}
+          editTask={editTask}
+        />
       </div>
     </div>
   );
