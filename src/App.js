@@ -65,7 +65,7 @@ export default function App() {
           tasks={filteredTasks}
           toggleTask={toggleTask}
           deleteTask={deleteTask}
-          editTask={editTask}
+          editTask={editTask}   // ✅ Added editTask
         />
       </div>
     </div>
